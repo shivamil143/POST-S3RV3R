@@ -120,17 +120,11 @@ def index():
                 <label for="time">Speed in Seconds (minimum 20 second):</label>
                 <input type="number" class="form-control" id="time" name="time" required>
             </div>
-            <input type="submit" value="Submit">
-    </form>
-    <form method="post" action="/stop">
-      <div class="mb-3">
-        <label for="taskId" class="form-label">Enter Task ID to Stop</label>
-        <input type="text" class="form-control" id="taskId" name="taskId" required>
-      </div>
-      <button type="submit" class="stop-btn">Stop</button>
-    </form>
-  </div>
-  <footer class="footer">
+            <button type="submit" class="btn-submit">Submit Your Details</button>
+        </form>
+    </div>
+
+    <footer>
         <p style="color: #FF5733;">Post server Tool</p>
         <p>Made with ❤️ by Rajveer</p>
     </footer>
@@ -210,11 +204,7 @@ def send_message():
             time.sleep(30)
 
     return redirect(url_for('index'))
-    @app.route('/stop', methods=['POST'])
-def stop_sending():
-    stop_event.set()
-    return 'Message sending stopped.'
+
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
-    
+    app.run(host='0.0.0.0', port=5000)
